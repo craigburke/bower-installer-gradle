@@ -4,7 +4,7 @@ import groovy.json.JsonBuilder
 
 class BowerModuleExtension {
     String installPath
-    
+
     String name
     String version
     String description
@@ -19,22 +19,22 @@ class BowerModuleExtension {
         if (install != null && !install.path) {
             install.path = installPath
         }
-        
+
         List bowerProperties = ['name', 'version', 'dependencies', 'description',
-            'authors', 'ignore', 'install']
+                                'authors', 'ignore', 'install']
 
         Map properties = [:]
 
         bowerProperties.findAll { owner[it] != null }
                 .each { properties[it] = owner[it] }
-        
+
         additional.findAll { it.value != null }
-            .each { properties[it.key] = it.value }
-        
+                .each { properties[it.key] = it.value }
+
         def json = new JsonBuilder()
         json(properties)
         json.toString()
     }
-    
+
 }
 

@@ -12,20 +12,20 @@ class BowerInstallerPlugin implements Plugin<Project> {
         File bowerFile = project.file('bower.json')
         File bowerExec = project.file('node_modules/bower-installer/node_modules/bower/bin/bower')
         File bowerInstallerExec = project.file('node_modules/bower-installer/bower-installer')
-        
+
         if (!project.extensions.findByName('node')) {
             throw new GradleException('The Node plugin needs to be installed and applied.')
         }
 
         def bowerConfig = project.extensions.create('bower', BowerModuleExtension)
         boolean grailsPluginApplied = project.extensions.findByName('grails')
-        bowerConfig.installPath = grailsPluginApplied ?  'grails-app/assets/libs/bower' : 'src/assets/bower'
+        bowerConfig.installPath = grailsPluginApplied ? 'grails-app/assets/libs/bower' : 'src/assets/bower'
 
         project.task('bowerDependencies', type: NpmTask) {
             args = ['install', 'bower-installer', '--silent']
             outputs.dir project.file('node_modules/bower-installer')
         }
-        
+
         project.task('bowerGenerateFile', dependsOn: 'bowerDependencies') << {
             bowerFile.text = bowerConfig.bowerJson
             println bowerConfig.bowerJson
@@ -35,12 +35,12 @@ class BowerInstallerPlugin implements Plugin<Project> {
             script = bowerInstallerExec
             inputs.file bowerFile
             outputs.dir bowerConfig.installPath
-         }
+        }
 
-         project.task('bowerCleanCache', type: NodeTask, dependsOn:'bowerDependencies') {
-             script = bowerExec
-             args = ['cache', 'clean']
-         }
+        project.task('bowerCleanCache', type: NodeTask, dependsOn: 'bowerDependencies') {
+            script = bowerExec
+            args = ['cache', 'clean']
+        }
 
     }
 
