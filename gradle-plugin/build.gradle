@@ -1,0 +1,153 @@
+plugins {
+    id 'org.ajoberstar.github-pages' version '1.1.0'
+    id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
+    id 'com.jfrog.bintray' version '1.2'
+}
+
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+
+targetCompatibility = 1.6
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+group = 'com.craigburke.gradle'
+version = '1.0.0'
+
+ext {
+    artifactId = 'bower-installer'
+    description = 'Bower Installer Gradle Plugin'
+    license = [
+            name: 'Mozilla Public License, Version 2.0',
+            url : 'https://www.mozilla.org/MPL/2.0/'
+    ]
+}
+
+configurations {
+    provided
+    testCompile { extendsFrom provided }
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.codehaus.groovy:groovy-all:2.4.4'
+    provided 'com.moowork.gradle:gradle-node-plugin:0.10'
+    testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
+}
+
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+bintray {
+    user = project.hasProperty('bintrayUsername') ? project.bintrayUsername : ''
+    key = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''
+    publications = ['maven']
+
+    pkg {
+        repo = 'document-builder'
+        userOrg = 'craigburke'
+        name = project.artifactId
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId project.artifactId
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name project.artifactId
+                    description project.description
+                    url 'https://github.com/craigburke/document-builder'
+                    scm {
+                        url 'https://github.com/craigburke/document-builder'
+                        connection 'scm:https://github.com/craigburke/document-builder.git'
+                        developerConnection 'scm:https://github.com/craigburke/document-builder.git'
+                    }
+                    licenses {
+                        license {
+                            name project.license.name
+                            url project.license.url
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'craigburke'
+                            name 'Craig Burke'
+                            email 'craig@craigburke.com'
+                        }
+                    }
+                }
+            }
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+
+bintrayUpload.dependsOn build, sourcesJar, javadoc
+
+task release {
+    dependsOn bintrayUpload, publishGhPages
+}
+
+asciidoctor {
+    sourceDir = file('docs')
+
+    resources {
+        from(sourceDir) {
+            include 'css/**', 'images/**'
+        }
+    }
+
+    attributes 'source-highlighter': 'prettify',
+            'docinfo1': ['version': project.version],
+            'imagesdir': 'images',
+            'stylesdir': 'css',
+            icons: 'font',
+            'toc': 'left',
+            version: project.version,
+            'projectUrl': 'https://github.com/craigburke/document-builder'
+}
+
+githubPages {
+    repoUri = 'https://github.com/craigburke/document-builder.git'
+
+    credentials {
+        username = project.hasProperty('githubToken') ? project.githubToken : ''
+        password = ''
+    }
+
+    pages {
+        from file(asciidoctor.outputDir.path + '/html5')
+    }
+}
+
+publishGhPages.dependsOn asciidoctor
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
