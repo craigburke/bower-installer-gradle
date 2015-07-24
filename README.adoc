@@ -89,7 +89,7 @@ In addition to the properties listed above, you can also include a *debug* and *
 ----
 bower {
     debug = true // <1>
-    installPath = 'src/assets' // <2>
+    installPath = 'src/assets/bower' // <2>
     additional = [ // <3>
         name: 'myApp'
     ]
