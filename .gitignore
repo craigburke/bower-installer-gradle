@@ -1,12 +1,5 @@
 .gradle
 .idea
 **.iml
-
-gradle-plugin/build
-gradle-plugin/.gradle
-
-test-app/node_modules/
-test-app/.gradle
-test-app/bower.json
-test-app/src/assets/bower
-test-app/bower_components/
+build
+.gradle
