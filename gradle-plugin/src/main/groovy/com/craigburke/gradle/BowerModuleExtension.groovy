@@ -3,8 +3,10 @@ package com.craigburke.gradle
 import groovy.json.JsonBuilder
 
 class BowerModuleExtension {
+    
     String installPath
-
+    boolean debug = false
+    
     String name
     String version
     String description
