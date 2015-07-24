@@ -64,46 +64,38 @@ plugins {
 
 apply plugin: 'bower-installer'
 
-bower { // <1>
-    name = 'myApp'
-    version = '1.0'
-    authors = 'Craig Burke <craig@craigburke.com>'
-    license = 'MIT'
-    dependencies = [ // <2>
+bower {
+    dependencies = [ // <1>
             'angular'                   : '1.3.x',
             'angular-animate'           : '1.3.x',
             'ui-router'                 : '0.2.x',
             'bootstrap'                 : '3.3.x',
             'animate.css'               : '3.3.x'
     ]
-    install = [ // <3>
+    install = [ // <2>
             sources: [bootstrap: ['bower_components/bootstrap/dist/**']],
             ignore : ['jquery']
     ]
+    additional = [ // <3>
+        name: 'myApp'
+    ]
 }
 ----
-<1> Use all the same properties you would see in a http://bower.io/docs/creating-packages/#bowerjson[bower.json file] 
-<2> Map of bower dependencies to download.
-<3> Use https://github.com/blittle/bower-installer[bower-installer] configuration settings.
+<1> List of bower dependencies to download.
+<2> Use https://github.com/blittle/bower-installer[bower-installer] configuration settings.
+<3> Set optional properties using the additional map. You can set an of the standard http://bower.io/docs/creating-packages/#bowerjson[bower.json properties] here.
 
-=== Optional properties
-In addition to the standard http://bower.io/docs/creating-packages/#bowerjson[bower.json properties], you can also include a *debug*, *installPath* or an *additional* property.
+In addition to the properties listed above, you can also set the *debug* and *installPath* properties.
  
 [source,gradle,subs='attributes']
 ----
 bower {
-	debug = true // <1>
-	installPath = 'src/assets' // <2>
-	
-	additional = [ // <3>
-		'private': 'true'
-	]
+    debug = true // <1>
+    installPath = 'src/assets' // <2>
 }
-
 ----
 <1> *debug* preserves the bower.json file and bower_components folder after the bowerInstall task is run to help with troubleshooting
 <2> *installPath* is the path that the bower dependencies are installed to
-<3> *additional* is a map that allows additional properties to be added to the generated bower.json file
 
 == Contributions
 

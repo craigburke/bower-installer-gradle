@@ -7,31 +7,20 @@ class BowerModuleExtension {
     String installPath
     boolean debug = false
     
-    String name
-    String version
-    String description
-    def license
-    List authors
     Map dependencies
-    Map install
-    List<String> ignore
+    Map install = [:]
     Map additional = [:]
 
     String getBowerJson() {
-        if (install != null && !install.path) {
+        if (!install.path) {
             install.path = installPath
         }
-
-        List bowerProperties = ['name', 'version', 'dependencies', 'description',
-                                'authors', 'ignore', 'install']
-
-        Map properties = [:]
-
-        bowerProperties.findAll { owner[it] != null }
-                .each { properties[it] = owner[it] }
-
-        additional.findAll { it.value != null }
-                .each { properties[it.key] = it.value }
+        
+        Map properties = [name: 'gradle-bower-installer', 
+                          dependencies: dependencies,
+                          install: install ]
+        
+        additional.each{ properties[it.key] = it.value }
 
         def json = new JsonBuilder()
         json(properties)
