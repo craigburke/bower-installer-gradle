@@ -83,7 +83,7 @@ bower {
 <2> Use https://github.com/blittle/bower-installer[bower-installer] configuration settings.
 <3> The *path* is the path that the bower dependencies are installed to.
 
-NOTE: if install.path is not set, it defaults to src/assets/bower or grails-app/assets/bower if the Grails plugin is applied.
+NOTE: if install.path is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
 
 === Optional properties
 
@@ -93,13 +93,13 @@ In addition to the properties listed above, you can also include a *debug* or an
 ----
 bower {
     debug = true // <1>
-    additional = [ // <3>
+    additional = [ // <2>
         name: 'myApp'
     ]
 }
 ----
 <1> *debug* preserves the bower.json file and bower_components folder after the bowerInstall task is run to help with troubleshooting
-<3> *additional* is a map that allows additional properties to be added to the generated http://bower.io/docs/creating-packages/#bowerjson[bower.json file]
+<2> *additional* is a map that allows additional properties to be added to the generated http://bower.io/docs/creating-packages/#bowerjson[bower.json file]
 
 == Contributions
 
