@@ -12,9 +12,6 @@ NOTE: You need to have the https://github.com/srs/gradle-node-plugin[Node Gradle
 [source,gradle,subs='attributes']
 ----
 buildscript {
-    repositories {
-        mavenLocal()
-    }
     dependencies {
         classpath "com.craigburke.gradle:bower-installer:{version}"
     }
@@ -50,9 +47,6 @@ You can use the same properties you'd set in your http://bower.io/docs/creating-
 [source,gradle,subs='attributes']
 ----
 buildscript {
-    repositories {
-        mavenLocal()
-    }
     dependencies {
         classpath "com.craigburke.gradle:bower-installer:{version}"
     }
