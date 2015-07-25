@@ -1,6 +1,4 @@
 plugins {
-    id 'org.ajoberstar.github-pages' version '1.1.0'
-    id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
     id 'com.jfrog.bintray' version '1.2'
 }
 
@@ -63,7 +61,7 @@ bintray {
     publications = ['maven']
 
     pkg {
-        repo = 'document-builder'
+        repo = 'gradle'
         userOrg = 'craigburke'
         name = project.artifactId
     }
@@ -78,11 +76,11 @@ publishing {
                     resolveStrategy = Closure.DELEGATE_FIRST
                     name project.artifactId
                     description project.description
-                    url 'https://github.com/craigburke/document-builder'
+                    url 'https://github.com/craigburke/bower-installer-gradle'
                     scm {
-                        url 'https://github.com/craigburke/document-builder'
-                        connection 'scm:https://github.com/craigburke/document-builder.git'
-                        developerConnection 'scm:https://github.com/craigburke/document-builder.git'
+                        url 'https://github.com/craigburke/bower-installer-gradle'
+                        connection 'scm:https://github.com/craigburke/bower-installer-gradle'
+                        developerConnection 'scm:https://github.com/craigburke/bower-installer-gradle'
                     }
                     licenses {
                         license {
@@ -109,44 +107,6 @@ publishing {
 
 
 bintrayUpload.dependsOn build, sourcesJar, javadoc
-
-task release {
-    dependsOn bintrayUpload, publishGhPages
-}
-
-asciidoctor {
-    sourceDir = file('docs')
-
-    resources {
-        from(sourceDir) {
-            include 'css/**', 'images/**'
-        }
-    }
-
-    attributes 'source-highlighter': 'prettify',
-            'docinfo1': ['version': project.version],
-            'imagesdir': 'images',
-            'stylesdir': 'css',
-            icons: 'font',
-            'toc': 'left',
-            version: project.version,
-            'projectUrl': 'https://github.com/craigburke/document-builder'
-}
-
-githubPages {
-    repoUri = 'https://github.com/craigburke/document-builder.git'
-
-    credentials {
-        username = project.hasProperty('githubToken') ? project.githubToken : ''
-        password = ''
-    }
-
-    pages {
-        from file(asciidoctor.outputDir.path + '/html5')
-    }
-}
-
-publishGhPages.dependsOn asciidoctor
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
