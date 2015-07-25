@@ -73,14 +73,14 @@ bower {
             'animate.css'               : '3.3.x'
     ]
     install = [ // <2>
-            path: 'src/assets/bower', <3>
+            path: 'src/assets/bower', // <3>
             sources: [bootstrap: ['bower_components/bootstrap/dist/**']],
             ignore : ['jquery']
     ]
 }
 ----
-<1> List of bower dependencies to download.
-<2> Use https://github.com/blittle/bower-installer[bower-installer] configuration settings.
+<1> List of bower dependencies to install.
+<2> Set https://github.com/blittle/bower-installer[bower-installer] configuration settings in the install map.
 <3> The *path* is the path that the bower dependencies are installed to.
 
 NOTE: if install.path is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
