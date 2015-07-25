@@ -23,7 +23,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
         
         def bowerConfig = project.extensions.create('bower', BowerModuleExtension)
         boolean grailsPluginApplied = project.extensions.findByName('grails')
-        bowerConfig.installPath = grailsPluginApplied ? 'grails-app/assets/libs/bower' : 'src/assets/bower'
+        bowerConfig.install.path = grailsPluginApplied ? 'grails-app/assets/libs/bower/' : 'src/assets/bower/'
 
         def deleteTempFiles = {
             if (!bowerConfig.debug) {
@@ -47,7 +47,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
                  description: 'Clears bower cache and removes all installed bower dependencies')
         bowerClean.doFirst {
             deleteTempFiles()
-            project.delete bowerConfig.installPath
+            project.delete bowerConfig.install.path.toString()
         }
         bowerClean.configure {
             script = BOWER_EXEC
@@ -65,7 +65,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
         }
         bowerInstall.configure {
             script = BOWER_INSTALLER_EXEC
-            outputs.dir bowerConfig.installPath
+            outputs.dir bowerConfig.install.path.toString()
         }
         bowerInstall.doLast deleteTempFiles
         bowerInstall.shouldRunAfter bowerClean

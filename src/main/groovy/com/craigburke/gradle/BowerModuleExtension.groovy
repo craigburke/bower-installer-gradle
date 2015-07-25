@@ -4,18 +4,20 @@ import groovy.json.JsonBuilder
 
 class BowerModuleExtension {
     
-    String installPath
     boolean debug = false
     
     Map dependencies
     Map install = [:]
     Map additional = [:]
 
-    String getBowerJson() {
-        if (!install.path) {
-            install.path = installPath
+    void setInstall(Map value) {
+        if (!value.path) {
+            value.path = install.path
         }
-        
+        install = value
+    }
+    
+    String getBowerJson() {
         Map properties = [name: 'gradle-bower-installer', 
                           dependencies: dependencies,
                           install: install ]
