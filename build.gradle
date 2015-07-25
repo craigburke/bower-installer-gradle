@@ -1,5 +1,6 @@
 plugins {
     id 'com.jfrog.bintray' version '1.2'
+    id 'com.gradle.plugin-publish' version '0.9.1'
 }
 
 apply plugin: 'idea'
@@ -33,7 +34,7 @@ configurations {
 
 dependencies {
     compile gradleApi()
-    compile 'org.codehaus.groovy:groovy-all:2.4.4'
+    compile 'org.codehaus.groovy:groovy-all:2.3.10'
     provided 'com.moowork.gradle:gradle-node-plugin:0.10'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
@@ -105,8 +106,22 @@ publishing {
     }
 }
 
-
 bintrayUpload.dependsOn build, sourcesJar, javadoc
+
+pluginBundle {
+    website = 'https://github.com/craigburke/bower-installer-gradle'
+    vcsUrl = 'https://github.com/craigburke/bower-installer-gradle'
+    description = 'Uses bower-installer to manage client-side dependencies alongside the other dependencies in build.gradle.'
+    tags = ['bower', 'bower-installer']
+
+    plugins {
+        bowerInstaller {
+            id = 'com.craigburke.bower-installer'
+            displayName = 'Bower Installer plugin'
+        }
+    }
+}
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
