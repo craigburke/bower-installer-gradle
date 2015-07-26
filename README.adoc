@@ -1,4 +1,4 @@
-:version: 1.0.0
+:version: 1.1.0
 
 = Bower Installer Gradle Plugin
 
@@ -11,17 +11,10 @@ NOTE: You need to have the https://github.com/srs/gradle-node-plugin[Node Gradle
 
 [source,gradle,subs='attributes']
 ----
-buildscript {
-    dependencies {
-        classpath "com.craigburke.gradle:bower-installer:{version}"
-    }
-}
-
 plugins {
     id 'com.moowork.node' version '0.10'
+    id 'com.craigburke.bower-installer' version '{version}'
 }
-
-apply plugin: 'com.craigburke.bower-installer'
 ----
 
 == Tasks
@@ -46,17 +39,10 @@ You can use the same properties you'd set in your http://bower.io/docs/creating-
 
 [source,gradle,subs='attributes']
 ----
-buildscript {
-    dependencies {
-        classpath "com.craigburke.gradle:bower-installer:{version}"
-    }
-}
-
 plugins {
     id 'com.moowork.node' version '0.10'
+    id 'com.craigburke.bower-installer' version '{version}'
 }
-
-apply plugin: 'com.craigburke.bower-installer'
 
 bower {
     dependencies = [ // <1>
@@ -67,7 +53,7 @@ bower {
             'animate.css'               : '3.3.x'
     ]
     install = [ // <2>
-            path: 'src/assets/bower', // <3>
+            base: 'src/assets/bower', // <3>
             sources: [bootstrap: ['bower_components/bootstrap/dist/**']],
             ignore : ['jquery']
     ]
@@ -75,25 +61,32 @@ bower {
 ----
 <1> List of bower dependencies to install.
 <2> Set https://github.com/blittle/bower-installer[bower-installer] configuration settings in the install map.
-<3> The *path* is the path that the bower dependencies are installed to.
+<3> The *base* is the path that the bower dependencies are installed to.
 
-NOTE: if install.path is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
+NOTE: if install.base is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
 
-=== Optional properties
+=== Additional properties
 
-In addition to the properties listed above, you can also include a *debug* or an *additional* properties.
+You can include any other properties you'd normally set in a http://bower.io/docs/creating-packages/#bowerjson[bower.json file] by setting the value in the
+*additional* map.
  
 [source,gradle,subs='attributes']
 ----
 bower {
-    debug = true // <1>
-    additional = [ // <2>
+    additional = [
         name: 'myApp'
     ]
 }
 ----
-<1> *debug* preserves the bower.json file and bower_components folder after the bowerInstall task is run to help with troubleshooting
-<2> *additional* is a map that allows additional properties to be added to the generated http://bower.io/docs/creating-packages/#bowerjson[bower.json file]
+
+=== Troubleshooting
+
+If you set the bowerDebug property when you run *bowerInstall* then both the `bower.json` file and the `bower_components` folder will remain to help troubleshoot.
+
+[source,bash]
+----
+./gradlew bowerInstall -PbowerDebug=true
+----
 
 == Contributions
 

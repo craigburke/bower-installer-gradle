@@ -3,16 +3,28 @@ package com.craigburke.gradle
 import groovy.json.JsonBuilder
 
 class BowerModuleExtension {
-    
-    boolean debug = false
-    
+
     Map dependencies
-    Map install = [:]
+    Map install = [
+       base: '',
+       path : [
+           js: '{name}/js',
+           css: '{name}/css',
+           eot: '{name}/fonts',
+           svg: '{name}/fonts',
+           ttf: '{name}/fonts',
+           woff: '{name}/fonts'
+       ]
+    ]
+    
     Map additional = [:]
 
     void setInstall(Map value) {
-        if (!value.path) {
-            value.path = install.path
+        def retain = ['base', 'path']
+        retain.each {
+            if (!value[it]) {
+                value[it] = install[it]
+            }
         }
         install = value
     }
