@@ -1,4 +1,4 @@
-:version: 1.1.1
+:version: 1.2.0
 
 = Bower Installer Gradle Plugin
 
@@ -65,7 +65,25 @@ bower {
 
 NOTE: if install.base is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
 
-=== Additional properties
+=== Optional properties
+
+You can control the the path that files are installed to through the *mapping* property.
+[source,gradle]
+----
+bower {
+    // default
+    mapping = [ // <1>
+      js : ['js'],
+      css: ['css'],
+      less: ['less'],
+      sass: ['sass', 'scss'],
+      fonts: ['ttf', 'woff', 'woff2', 'eot', 'otf', 'svg']
+    ]
+}
+----
+<1> The key is the folder name and the value is a list of file extensions that will be copied into that folder.
+
+For example, for twitter bootstrap all file with font extensions will be installed to `bootstrap/fonts`, all javascript to `bootstrap/js` etc.
 
 You can include any other properties you'd normally set in a http://bower.io/docs/creating-packages/#bowerjson[bower.json file] by setting the value in the
 *additional* map.
@@ -74,7 +92,7 @@ You can include any other properties you'd normally set in a http://bower.io/doc
 ----
 bower {
     additional = [
-        name: 'myApp'
+        name: 'gradle-bower-installer'
     ]
 }
 ----
