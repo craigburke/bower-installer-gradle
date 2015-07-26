@@ -10,13 +10,10 @@ class BowerModuleExtension {
        path : [
            js: '{name}/js',
            css: '{name}/css',
-           eot: '{name}/fonts',
-           svg: '{name}/fonts',
-           ttf: '{name}/fonts',
-           woff: '{name}/fonts'
+           '/(woff.*|eot|otf|svg|ttf)$/': '{name}/fonts'
        ]
     ]
-    
+
     Map additional = [:]
 
     void setInstall(Map value) {
