@@ -19,7 +19,7 @@ class BowerModuleExtension {
     
     String getBowerJson() {
         Map install = [base: installBase, path: [:], sources: [:]]
-        install.excludes = excludes
+        install.ignore = excludes
 
         mappings.each {
             install.path["/(${it.value.join('|')})\$/"] = "{name}/${it.key}"
