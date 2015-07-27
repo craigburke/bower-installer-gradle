@@ -1,4 +1,4 @@
-:version: 1.2.0
+:version: 1.3.0
 
 = Bower Installer Gradle Plugin
 
@@ -45,57 +45,53 @@ plugins {
 }
 
 bower {
-    dependencies = [ // <1>
-            'angular'                   : '1.3.x',
-            'angular-animate'           : '1.3.x',
-            'ui-router'                 : '0.2.x',
-            'bootstrap'                 : '3.3.x',
-            'animate.css'               : '3.3.x'
+    installBase = 'src/assets/bower' // <1>
+
+    dependencies = [ // <2>
+        'angular'                   : '1.3.x',
+        'angular-animate'           : '1.3.x',
+        'ui-router'                 : '0.2.x',
+        'bootstrap'                 : '3.3.x',
+        'animate.css'               : '3.3.x'
     ]
-    install = [ // <2>
-            base: 'src/assets/bower', // <3>
-            sources: [bootstrap: ['bower_components/bootstrap/dist/**']],
-            ignore : ['jquery']
+    
+    sources = [ // <3>
+        'bootstrap': ['dist/**']
     ]
+    
+    ignore = ['jquery'] // <4>
 }
 ----
-<1> List of bower dependencies to install.
-<2> Set https://github.com/blittle/bower-installer[bower-installer] configuration settings in the install map.
-<3> The *base* is the path that the bower dependencies are installed to.
+<1> *installBase* is the path that the bower dependencies are installed to.
+<2> *dependencies* is a list of dependencies that should be installed by bower.
+<3> *sources* helps you optionally limit what files get installed for each dependency.
+<4> *ignore* allows you to set transitive dependencies that shouldn't be installed.
 
-NOTE: if install.base is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
+NOTE: if installBase is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
 
-=== Optional properties
+=== Advanced properties
 
-You can control the the path that files are installed to through the *mapping* property.
 [source,gradle]
 ----
 bower {
-    // default
     mapping = [ // <1>
-      js : ['js'],
-      css: ['css'],
-      less: ['less'],
-      sass: ['sass', 'scss'],
-      fonts: ['ttf', 'woff', 'woff2', 'eot', 'otf', 'svg']
+        js : ['js'],
+        css: ['css'],
+        less: ['less'],
+        sass: ['sass', 'scss'],
+        fonts: ['ttf', 'woff', 'woff2', 'eot', 'otf', 'svg']
     ]
-}
-----
-<1> The key is the folder name and the value is a list of file extensions that will be copied into that folder.
 
-For example, for twitter bootstrap all file with font extensions will be installed to `bootstrap/fonts`, all javascript to `bootstrap/js` etc.
-
-You can include any other properties you'd normally set in a http://bower.io/docs/creating-packages/#bowerjson[bower.json file] by setting the value in the
-*additional* map.
- 
-[source,gradle,subs='attributes']
-----
-bower {
-    additional = [
+    additional = [ // <2>
         name: 'gradle-bower-installer'
     ]
+    
 }
 ----
+<1> *mapping* helps you control what folder 
+<2> *additional* allow you to set optional properties in the generated http://bower.io/docs/creating-packages/#bowerjson[bower.json file].
+
+NOTE: An example of how the mapping works with the setting above. For the twitter bootstrap all file with font extensions will be installed into `bootstrap/fonts`, all javascript to `bootstrap/js` etc.
 
 === Troubleshooting
 

@@ -4,9 +4,8 @@ import groovy.json.JsonBuilder
 
 class BowerModuleExtension {
 
+    String installBase
     Map dependencies = [:]
-    Map install = [:]
-
     Map<String, List> mappings = [
         js : ['js'],
         css: ['css'],
@@ -14,34 +13,27 @@ class BowerModuleExtension {
         sass: ['sass', 'scss'],
         fonts: ['ttf', 'woff', 'woff2', 'eot', 'otf', 'svg']
     ]
+    Map<String, List> sources = [:]
+    List excludes = []
     Map additional = [:]
-
-    void setInstall(Map value) {
-        def retain = ['base', 'path']
-        retain.each {
-            if (!value[it]) {
-                value[it] = install[it]
-            }
-        }
-        install = value
-    }
     
     String getBowerJson() {
-        Map bowerInstallMap = install?.clone() ?: [:]
-        
-        Map properties = [name: 'gradle-bower-installer', 
-                          dependencies: dependencies,
-                          install: bowerInstallMap ]
-        
-        additional.each{ properties[it.key] = it.value }
-        properties.install.path = [:]
-        
+        Map install = [base: installBase, path: [:], sources: [:]]
+        install.excludes = excludes
+
         mappings.each {
-            bowerInstallMap.path["/(${it.value.join('|')})\$/"] = "{name}/${it.key}"
+            install.path["/(${it.value.join('|')})\$/"] = "{name}/${it.key}"
         }
-        if (install.path) {
-            bowerInstallMap.path << install.path
+
+        sources.each { String moduleName, List includes ->
+            install.sources[moduleName] = includes.collect { "bower_components/${moduleName}/${it}" }
         }
+        
+        Map properties = [name: 'gradle-bower-installer',
+                          dependencies: dependencies,
+                          install: install ]
+
+        additional.each{ properties[it.key] = it.value }
 
         def json = new JsonBuilder()
         json(properties)
