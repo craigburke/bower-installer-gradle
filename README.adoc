@@ -88,7 +88,7 @@ bower {
     
 }
 ----
-<1> *mapping* helps you control what folder 
+<1> *mapping* helps you control wgithat subfolder certain file types get installed to.
 <2> *additional* allow you to set optional properties in the generated http://bower.io/docs/creating-packages/#bowerjson[bower.json file].
 
 NOTE: An example of how the mapping works with the setting above. For the twitter bootstrap all file with font extensions will be installed into `bootstrap/fonts`, all javascript to `bootstrap/js` etc.
