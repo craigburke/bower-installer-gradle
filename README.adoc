@@ -35,7 +35,7 @@ The plugin adds the following tasks to your build:
 
 == Configuration
 
-You can specify dependencies as well as control where files are installed to wit
+You can specify dependencies as well as control where files are installed to with the provided dependency DSL.
 
 [source,gradle,subs='attributes']
 ----
@@ -48,12 +48,13 @@ bower {
     installBase = 'src/assets/bower' // <1>
 
     dependencies {
+        
         'angular'('1.3.x') {
             source 'angular.js' // <2>
         }
          
         'angular-animate'('1.3.x') {
-            source 'angular-animate.js' : '/angular/modules' // <3>
+            source 'angular-animate.js' >> '/angular/modules' // <3>
         }
         
         'ui-router'('0.2.x') // <4>
@@ -75,7 +76,7 @@ bower {
 <5> Exclude the transitive dependency jquery
 
 
-NOTE: if installBase is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
+NOTE: if installBase is not set, it defaults to `src/assets/bower`.
 
 === Advanced properties
 
