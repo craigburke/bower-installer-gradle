@@ -24,7 +24,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
         def bowerConfig = project.extensions.create('bower', BowerModuleExtension)
         
         boolean grailsPluginApplied = project.extensions.findByName('grails')
-        bowerConfig.installBase = grailsPluginApplied ? 'grails-app/assets/libs/bower' : 'src/assets/bower'
+        bowerConfig.installBase = grailsPluginApplied ? 'grails-app/assets/bower' : 'src/assets/bower'
         boolean bowerDebug = project.hasProperty('bowerDebug') ? project.property('bowerDebug') : false
 
         def deleteTempFiles = {
@@ -75,8 +75,13 @@ class BowerInstallerPlugin implements Plugin<Project> {
                 
                 BOWER_FILE.text = bowerJson.toString()
             }
+            
             script = BOWER_INSTALLER_EXEC
-            outputs.dir bowerConfig.installBase
+
+            outputs.upToDateWhen {
+                project.file(bowerConfig.installBase).exists()
+            }
+            
             doLast {
                 project.file(bowerConfig.installBase).eachFile(FileType.DIRECTORIES) {
                     if (!it.list()) {
