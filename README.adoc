@@ -49,17 +49,17 @@ bower {
 
     dependencies {
         
-        'angular:1.3.x' {
+        'angular'('1.3.x') {
             source 'angular.js' // <2>
         }
          
-        'angular-animate:1.3.x' {
+        'angular-animate'('1.3.x') {
             source 'angular-animate.js' >> '/angular/modules' // <3>
         }
         
-        'ui-router:0.2.x'() // <4>
+        'ui-router'('0.2.x') // <4>
         
-        'bootstrap:3.3.x' {
+        'bootstrap'('3.3.x') {
             source 'dist/css/*.min.css' >> 'styles'
             source 'dist/fonts/**' >> 'fonts'
 
