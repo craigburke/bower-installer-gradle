@@ -35,7 +35,7 @@ The plugin adds the following tasks to your build:
 
 == Configuration
 
-You can specify dependencies as well as control where files are installed to wit
+You can specify dependencies as well as control where files are installed to with the provided dependency DSL.
 
 [source,gradle,subs='attributes']
 ----
