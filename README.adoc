@@ -1,4 +1,4 @@
-:version: 1.3.3
+:version: 2.0.0
 
 = Bower Installer Gradle Plugin
 
@@ -35,7 +35,7 @@ The plugin adds the following tasks to your build:
 
 == Configuration
 
-You can use the same properties you'd set in your http://bower.io/docs/creating-packages/#bowerjson[bower.json file] directly in *build.gradle*
+You can specify dependencies as well as control where files are installed to wit
 
 [source,gradle,subs='attributes']
 ----
@@ -47,25 +47,33 @@ plugins {
 bower {
     installBase = 'src/assets/bower' // <1>
 
-    dependencies = [ // <2>
-        'angular'                   : '1.3.x',
-        'angular-animate'           : '1.3.x',
-        'ui-router'                 : '0.2.x',
-        'bootstrap'                 : '3.3.x',
-        'animate.css'               : '3.3.x'
-    ]
-    
-    sources = [ // <3>
-        'bootstrap': ['dist/**']
-    ]
-    
-    ignore = ['jquery'] // <4>
+    dependencies {
+        'angular'('1.3.x') {
+            source 'angular.js' // <2>
+        }
+         
+        'angular-animate'('1.3.x') {
+            source 'angular-animate.js' : '/angular/modules' // <3>
+        }
+        
+        'ui-router'('0.2.x') // <4>
+        
+        'bootstrap'('3.3.x') {
+            source 'dist/css/*.min.css' >> 'styles'
+            source 'dist/fonts/**' >> 'fonts'
+
+            excludes 'jquery' // <5>
+        }
+
+    }
 }
 ----
-<1> *installBase* is the path that the bower dependencies are installed to.
-<2> *dependencies* is a list of dependencies that should be installed by bower.
-<3> *sources* helps you optionally limit what files get installed for each dependency.
-<4> *ignore* allows you to set transitive dependencies that shouldn't be installed.
+<1> *installBase* is the base path that the bower dependencies are installed to
+<2> This copies the *angular.js* file to the default location (`src/assets/bower/angular/angular.js`)
+<3> An absolute path is used here so `angular-animate.js` will be copied to `src/assets/bower/angular/modules/angular-animate.js`
+<4> When no sources are specified the default behavior of bower-installer determines which files are included
+<5> Exclude the transitive dependency jquery
+
 
 NOTE: if installBase is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
 
@@ -74,24 +82,12 @@ NOTE: if installBase is not set, it defaults to `src/assets/bower` or `grails-ap
 [source,gradle]
 ----
 bower {
-    mapping = [ // <1>
-        js : ['js'],
-        css: ['css'],
-        less: ['less'],
-        sass: ['sass', 'scss'],
-        fonts: ['ttf', 'woff', 'woff2', 'eot', 'otf', 'svg']
-    ]
-
-    additional = [ // <2>
+    additional = [ // <1>
         name: 'gradle-bower-installer'
     ]
-    
 }
 ----
-<1> *mapping* helps you control wgithat subfolder certain file types get installed to.
-<2> *additional* allow you to set optional properties in the generated http://bower.io/docs/creating-packages/#bowerjson[bower.json file].
-
-NOTE: An example of how the mapping works with the setting above. For the twitter bootstrap all file with font extensions will be installed into `bootstrap/fonts`, all javascript to `bootstrap/js` etc.
+<1> *additional* allow you to set optional properties in the generated http://bower.io/docs/creating-packages/#bowerjson[bower.json file].
 
 === Troubleshooting
 
