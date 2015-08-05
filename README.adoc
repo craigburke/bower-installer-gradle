@@ -76,7 +76,7 @@ bower {
 <5> Exclude the transitive dependency jquery
 
 
-NOTE: if installBase is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` if the Grails plugin is applied.
+NOTE: if installBase is not set, it defaults to `src/assets/bower`.
 
 === Advanced properties
 
