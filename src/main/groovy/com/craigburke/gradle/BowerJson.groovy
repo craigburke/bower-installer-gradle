@@ -29,7 +29,9 @@ class BowerJson {
         bowerConfig.dependencies.each { Dependency dependency ->
             bowerJson.install.ignore += dependency.excludes
 
-            sources[dependency.name] = [mapping: []]
+            if (dependency.sources) {
+                sources[dependency.name] = [mapping: []]
+            }
 
             dependency.sources.each { String key, String value ->
                 String includeExpression = getIncludeExpression(dependency.name, key)
@@ -45,7 +47,7 @@ class BowerJson {
         }
 
         bowerConfig.additional.each{ bowerJson[it.key] = it.value }
-        
+
         def json = new JsonBuilder()
         json(bowerJson)
         json
