@@ -1,18 +1,15 @@
-:version: 2.0.1
+:version: 2.1.0
 
 = Bower Installer Gradle Plugin
 
 The Gradle plugin uses https://github.com/blittle/bower-installer[bower-installer] to manage client-side dependencies alongside the other
 dependencies in *build.gradle.* 
 
-NOTE: You need to have the https://github.com/srs/gradle-node-plugin[Node Gradle plugin] applied in order to use this.
-
 == Getting Started
 
 [source,gradle,subs='attributes']
 ----
 plugins {
-    id 'com.moowork.node' version '0.10'
     id 'com.craigburke.bower-installer' version '{version}'
 }
 ----
@@ -40,7 +37,6 @@ You can specify dependencies as well as control where files are installed to wit
 [source,gradle,subs='attributes']
 ----
 plugins {
-    id 'com.moowork.node' version '0.10'
     id 'com.craigburke.bower-installer' version '{version}'
 }
 
