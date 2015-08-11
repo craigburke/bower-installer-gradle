@@ -16,7 +16,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
             throw new GradleException('The Node plugin needs to be installed and applied.')
         }
 
-        final String NPM_OUTPUT_PATH = project.file(nodeConfig.nodeModulesDir).absolutePath + '/node_modules/'
+        final String NPM_OUTPUT_PATH = project.file(nodeConfig.nodeModulesDir).absolutePath.replace(File.separator, '/') + '/node_modules/'
         final File BOWER_FILE = project.file('bower.json')
         final File BOWER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/node_modules/bower/bin/bower')
         final File BOWER_INSTALLER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/bower-installer')
