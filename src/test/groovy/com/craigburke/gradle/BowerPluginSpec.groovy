@@ -7,23 +7,12 @@ import spock.lang.Unroll
 
 class BowerPluginSpec extends Specification {
 
-    def "throw error when node plugin isn't present"() {
-        given:
-        Project project = ProjectBuilder.builder().build()
-        
-        when:
-        project.pluginManager.apply('com.craigburke.bower-installer')
-        
-        then:
-        thrown(Exception)
-    }
     
     @Unroll
     def "#taskName added to project when applied"() {
         given:
         Project project = ProjectBuilder.builder().build()
-        project.pluginManager.apply('com.moowork.node')
-        
+
         when:
         project.pluginManager.apply('com.craigburke.bower-installer')
 
@@ -38,7 +27,6 @@ class BowerPluginSpec extends Specification {
     def "#taskName is created with correct dependsOn"() {
         given:
         Project project = ProjectBuilder.builder().build()
-        project.pluginManager.apply('com.moowork.node')
 
         when:
         project.pluginManager.apply('com.craigburke.bower-installer')
@@ -57,7 +45,6 @@ class BowerPluginSpec extends Specification {
     def "bower module extension is added"() {
         given:
         Project project = ProjectBuilder.builder().build()
-        project.pluginManager.apply('com.moowork.node')
 
         when:
         project.pluginManager.apply('com.craigburke.bower-installer')

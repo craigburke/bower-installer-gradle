@@ -13,7 +13,7 @@ repositories {
 }
 
 group = 'com.craigburke.gradle'
-version = '2.0.1'
+version = '2.1.0'
 
 ext {
     artifactId = 'bower-installer'
@@ -28,7 +28,7 @@ configurations {
 dependencies {
     compile gradleApi()
     compile 'org.codehaus.groovy:groovy-all:2.3.10'
-    provided 'com.moowork.gradle:gradle-node-plugin:0.10'
+    compile 'com.moowork.gradle:gradle-node-plugin:0.10'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 }
 

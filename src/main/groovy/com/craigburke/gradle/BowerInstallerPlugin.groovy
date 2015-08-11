@@ -1,9 +1,9 @@
 package com.craigburke.gradle
 
+import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.task.NodeTask
 import com.moowork.gradle.node.task.NpmTask
 import groovy.io.FileType
-import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
@@ -11,16 +11,15 @@ import org.gradle.api.file.FileTree
 class BowerInstallerPlugin implements Plugin<Project> {
 
     void apply(Project project) {
+        project.plugins.apply NodePlugin
         def nodeConfig = project.extensions.findByName('node')
-        if (!nodeConfig) {
-            throw new GradleException('The Node plugin needs to be installed and applied.')
-        }
-
+        
         final String NPM_OUTPUT_PATH = project.file(nodeConfig.nodeModulesDir).absolutePath.replace(File.separator, '/') + '/node_modules/'
-        final File BOWER_FILE = project.file('bower.json')
         final File BOWER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/node_modules/bower/bin/bower')
         final File BOWER_INSTALLER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/bower-installer')
-        
+
+        final File BOWER_FILE = project.file('bower.json')
+
         def bowerConfig = project.extensions.create('bower', BowerModuleExtension)
         
         boolean grailsPluginApplied = project.extensions.findByName('grails')
