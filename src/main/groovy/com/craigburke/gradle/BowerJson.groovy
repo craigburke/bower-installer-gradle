@@ -38,7 +38,7 @@ class BowerJson {
                 FileTree moduleFiles = bowerFiles.matching { include includeExpression }
 
                 moduleFiles.each { File file ->
-                    String relativePath = file.absolutePath - "${projectRoot.absolutePath}/"
+                    String relativePath = file.absolutePath - "${projectRoot.absolutePath}${File.separator}"
                     String destination = getDestinationPath(dependency.name, relativePath, key, value)
 
                     sources[dependency.name].mapping << [ (relativePath) : destination ]
@@ -64,7 +64,7 @@ class BowerJson {
         boolean sourceIsFolder = !source.contains('.') && !source.contains('*')
         boolean destinationIsFolder = !destination.contains('.')
         boolean absolutePath = destination.startsWith('/')
-        String fileName = relativePath.tokenize('/').last()
+        String fileName = relativePath.tokenize(File.separator).last()
         
         String path = absolutePath ? "..${destination}" : destination
         
@@ -81,8 +81,7 @@ class BowerJson {
             }
         }
         
-        path
+        path.replace('/', File.separator)
     }
-
 
 }
