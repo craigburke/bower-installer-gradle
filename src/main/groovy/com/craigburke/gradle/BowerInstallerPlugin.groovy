@@ -1,5 +1,6 @@
 package com.craigburke.gradle
 
+import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.NodePlugin
 import com.moowork.gradle.node.task.NodeTask
 import com.moowork.gradle.node.task.NpmTask
@@ -12,7 +13,8 @@ class BowerInstallerPlugin implements Plugin<Project> {
 
     void apply(Project project) {
         project.plugins.apply NodePlugin
-        def nodeConfig = project.extensions.findByName('node')
+        NodeExtension nodeConfig = project.extensions.findByName('node')
+        nodeConfig.download = true
         
         final String NPM_OUTPUT_PATH = project.file(nodeConfig.nodeModulesDir).absolutePath.replace(File.separator, '/') + '/node_modules/'
         final File BOWER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/node_modules/bower/bin/bower')
