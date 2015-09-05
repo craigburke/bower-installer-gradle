@@ -63,7 +63,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
                 description: 'Installs bower dependencies') {
             doFirst {
                 FileTree bowerRoot = project.fileTree('bower_components')
-                def bowerJson = BowerJson.generateFinal(bowerConfig, project.rootDir, bowerRoot)
+                def bowerJson = BowerJson.generateFinal(bowerConfig, project.projectDir, bowerRoot)
                 
                 // Make sure containing folder exists
                 bowerJson.content.install.sources.each { String moduleName, config ->
