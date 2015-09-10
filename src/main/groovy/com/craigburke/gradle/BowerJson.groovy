@@ -38,7 +38,12 @@ class BowerJson {
                 FileTree moduleFiles = bowerFiles.matching { include includeExpression }
 
                 moduleFiles.each { File file ->
+                    // To generate the relative path it's OK to take in account the system's file separator.
+                    // After that, we need to standardize and manipulate both the relative and destination paths using
+                    // UNIX file separators to avoid an invalid format in the resulting 'bower.json' file.
+                    // An invalid 'bower.json' file cannot be processed by the 'bower-installer' script.
                     String relativePath = file.absolutePath - "${projectRoot.absolutePath}${File.separator}"
+                    relativePath = relativePath.replace(File.separator, '/')
                     String destination = getDestinationPath(dependency.name, relativePath, key, value)
 
                     sources[dependency.name].mapping << [ (relativePath) : destination ]
@@ -64,7 +69,8 @@ class BowerJson {
         boolean sourceIsFolder = !source.contains('.') && !source.contains('*')
         boolean destinationIsFolder = !destination.contains('.')
         boolean absolutePath = destination.startsWith('/')
-        String fileName = relativePath.tokenize(File.separator).last()
+        // It's assumed that the relative path is using UNIX file separators.
+        String fileName = relativePath.tokenize('/').last()
         
         String path = absolutePath ? "..${destination}" : destination
         
@@ -80,8 +86,8 @@ class BowerJson {
                 path += "/${fileName}"
             }
         }
-        
-        path.replace('/', File.separator)
-    }
 
+        // As the resulting path was created based on UNIX file separators it doesn't need further manipulation.
+        path
+    }
 }
