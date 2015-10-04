@@ -43,7 +43,7 @@ class BowerJson {
                 FileTree moduleFiles = bowerFiles.matching { include includeExpression }
 
                 moduleFiles.each { File file ->
-                    String relativePath = normalizePath(file.absolutePath) - "${projectRoot.absolutePath}/"
+                    String relativePath = normalizePath(file.absolutePath) - "${normalizePath(projectRoot.absolutePath)}/"
                     String destination = getDestinationPath(dependency.name, relativePath, key, value)
 
                     sources[dependency.name].mapping << [ (relativePath) : destination ]
