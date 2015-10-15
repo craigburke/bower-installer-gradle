@@ -56,10 +56,10 @@ bower {
         'ui-router'('0.2.x') // <4>
         
         'bootstrap'('3.3.x') {
-            source 'dist/css/*.min.css' >> './styles/' // <5>
+            source 'dist/css/*.min.css' >> './styles/'
             source 'dist/fonts/**' >> './fonts/'
 
-            excludes 'jquery' // <6>
+            excludes 'jquery' // <5>
         }
 
     }
@@ -69,8 +69,7 @@ bower {
 <2> This copies the *angular.js* file to the default location (`src/assets/bower/angular/angular.js`)
 <3> An absolute path is used here so `angular-animate.js` will be copied to `src/assets/bower/angular/modules/angular-animate.js`
 <4> When no sources are specified the default behavior of bower-installer determines which files are included
-<5>
-<6> Exclude the transitive dependency jquery
+<5> Exclude the transitive dependency jquery
 
 
 NOTE: if installBase is not set, it defaults to `src/assets/bower`.
