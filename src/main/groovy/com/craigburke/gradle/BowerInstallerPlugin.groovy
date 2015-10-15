@@ -99,7 +99,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             ['run', 'bootRun', 'assetCompile'].each { String taskName ->
-                def buildTask = project.task(taskName)
+                def buildTask = project.tasks.getByName(taskName)
                 if (buildTask) {
                     buildTask.dependsOn 'bowerInstall'
                 }
