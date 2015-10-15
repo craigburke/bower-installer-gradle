@@ -39,7 +39,7 @@ class BowerJsonSpec extends Specification {
         where:
         count << [0, 1, 10, 20, 30]
     }
-    
+
     @Unroll
     def "copy file #source with the default destination" () {
         given:
@@ -53,10 +53,11 @@ class BowerJsonSpec extends Specification {
         mapping["bower_components/foo/${source}"] == destination
         
         where:
-        source          || destination
-        'css/foo.css'   ||  'foo.css'
-        'js/foo.js'     ||  'foo.js'
-        'js/foo.min.js' ||  'foo.min.js'
+        source                 || destination
+        'css/foo.css'          || 'foo.css'
+        'js/foo.js'            || 'foo.js'
+        'js/foo.min.js'        || 'foo.min.js'
+        'js/modules/module.js' || 'module.js'
     }
     
     @Unroll

@@ -63,8 +63,19 @@ class BowerJson {
     }
 
     static String getRelativePath(String fullRelativePath, String sourceExpression, String moduleName) {
-        String sourceFolder = sourceExpression.contains('/') ? sourceExpression.tokenize('/').first() + '/' : ''
-        fullRelativePath - "bower_components/${moduleName}/" - sourceFolder
+        String sourceFolder
+
+        if (sourceExpression.endsWith('/') || sourceExpression.contains('*')) {
+            sourceFolder = sourceExpression
+        }
+        else if (sourceExpression.contains('/')) {
+            sourceFolder = sourceExpression - "/${sourceExpression.tokenize('/').last()}"
+        }
+        else {
+            sourceFolder = sourceExpression
+        }
+
+        fullRelativePath - sourceFolder - "bower_components/${moduleName}/"
     }
 
     static String normalizeExpression(String expression) {
