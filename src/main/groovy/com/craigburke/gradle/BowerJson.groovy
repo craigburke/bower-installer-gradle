@@ -38,15 +38,19 @@ class BowerJson {
                 sources[dependency.name] = [mapping: []]
             }
 
-            dependency.sources.each { String key, String value ->
-                String includeExpression = getIncludeExpression(dependency.name, key)
+            dependency.sources.each { String sourceExpression, String destinationExpression ->
+                sourceExpression = normalizeExpression(sourceExpression)
+                destinationExpression = normalizeExpression(destinationExpression)
+
+                String includeExpression = getIncludeExpression(dependency.name, sourceExpression)
                 FileTree moduleFiles = bowerFiles.matching { include includeExpression }
 
                 moduleFiles.each { File file ->
-                    String relativePath = normalizePath(file.absolutePath) - "${normalizePath(projectRoot.absolutePath)}/"
-                    String destination = getDestinationPath(dependency.name, relativePath, key, value)
+                    String fullRelativePath = normalizePath(file.absolutePath) - "${normalizePath(projectRoot.absolutePath)}/"
+                    String relativePath = getRelativePath(fullRelativePath, sourceExpression, dependency.name)
+                    String destination = getDestinationPath(relativePath, sourceExpression, destinationExpression)
 
-                    sources[dependency.name].mapping << [ (relativePath) : destination ]
+                    sources[dependency.name].mapping << [ (fullRelativePath) : destination ]
                 }
             }
         }
@@ -57,32 +61,41 @@ class BowerJson {
         json(bowerJson)
         json
     }
-    
+
+    static String getRelativePath(String fullRelativePath, String sourceExpression, String moduleName) {
+        String sourceFolder = sourceExpression.contains('/') ? sourceExpression.tokenize('/').first() + '/' : ''
+        fullRelativePath - "bower_components/${moduleName}/" - sourceFolder
+    }
+
+    static String normalizeExpression(String expression) {
+        expression?.startsWith('./') ? expression.substring(2) : expression
+    }
+
     static String getIncludeExpression(String moduleName, String expression) {
-        boolean hasSearchTokens = expression.contains('*')
-        boolean isFile = expression.contains('.')
+        boolean isFile = !expression.endsWith('/')
         String includeExpression = "${moduleName}/${expression}"
-        (hasSearchTokens || isFile) ? includeExpression : "${includeExpression}/**"
+        isFile ? includeExpression : "${includeExpression}**"
     }
     
-    static String getDestinationPath(String moduleName, String relativePath, String source, String destination) {
+    static String getDestinationPath(String relativePath, String source, String destination) {
         boolean sourceIsFolder = !source.contains('.') && !source.contains('*')
-        boolean destinationIsFolder = !destination.contains('.')
-        boolean absolutePath = destination.startsWith('/')
+        boolean maintainPath = source.contains('**')
+        boolean destinationIsFolder = destination?.endsWith('/')
+        boolean absolutePath = destination?.startsWith('/')
+
         String fileName = relativePath.tokenize('/').last()
-        
         String path = absolutePath ? "..${destination}" : destination
         
         if (!destination) {
-            path = "${fileName}"
+            path = maintainPath ? relativePath : fileName
         }
         else if (destinationIsFolder) {
             if (sourceIsFolder) {
-                String pathFromModuleRoot = relativePath - "bower_components/${moduleName}/" - "${source}/"
-                path += "/${pathFromModuleRoot}"
+                String pathFromModuleRoot = relativePath - "${source}/"
+                path += pathFromModuleRoot
             }
             else {
-                path += "/${fileName}"
+                path += maintainPath ? relativePath : fileName
             }
         }
 

@@ -80,7 +80,7 @@ class BowerJsonSpec extends Specification {
 
     @Unroll("copy #source to #destination")
     def "generate final bower.json with #source being copied to a subfolder"() {
-        dependencySource = ["**/*.js" : "subfolder"]
+        dependencySource = ["**/*.js" : "subfolder/"]
 
         when:
         def result = BowerJson.generateFinal(bowerConfig, projectRoot, bowerRoot).content
@@ -92,13 +92,13 @@ class BowerJsonSpec extends Specification {
         where:
         source                                      | destination
         'bower_components/foo/blah.js'              | 'subfolder/blah.js'
-        'bower_components/foo/js/foo.min.js'        | 'subfolder/foo.min.js'
-        'bower_components/foo/js/modules/module.js' | 'subfolder/module.js'
+        'bower_components/foo/js/foo.min.js'        | 'subfolder/js/foo.min.js'
+        'bower_components/foo/js/modules/module.js' | 'subfolder/js/modules/module.js'
     }
 
     @Unroll("copy #source to #destination")
     def "generate final bower.json copying an entire folders with subfolders"() {
-        dependencySource = ["js" : "scripts"]
+        dependencySource = ["./js/" : "./scripts/"]
 
         when:
         def result = BowerJson.generateFinal(bowerConfig, projectRoot, bowerRoot).content
@@ -116,7 +116,7 @@ class BowerJsonSpec extends Specification {
 
     @Unroll("copy #source to #destination")
     def "generate final bower.json copying files to an absolute path"() {
-        dependencySource = ["js" : "/scripts"]
+        dependencySource = ["./js/" : "/scripts/"]
 
         when:
         def result = BowerJson.generateFinal(bowerConfig, projectRoot, bowerRoot).content

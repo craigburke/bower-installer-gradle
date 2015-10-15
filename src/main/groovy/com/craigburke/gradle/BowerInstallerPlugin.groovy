@@ -96,6 +96,15 @@ class BowerInstallerPlugin implements Plugin<Project> {
         project.task('bowerRefresh',
                 dependsOn: ['bowerClean', 'bowerInstall'], group: 'Bower',
                 description: 'Clears bower cache and refreshes dependencies')
+
+        project.afterEvaluate {
+            ['run', 'bootRun', 'assetCompile'].each { String taskName ->
+                def buildTask = project.task(taskName)
+                if (buildTask) {
+                    buildTask.dependsOn 'bowerInstall'
+                }
+            }
+        }
     }
     
 }

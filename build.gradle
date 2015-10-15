@@ -1,7 +1,8 @@
 plugins {
-    id 'com.gradle.plugin-publish' version '0.9.1'
     id 'groovy'
     id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.9.1'
+    id 'nebula.provided-base' version '3.0.3'
 }
 
 targetCompatibility = 1.6
@@ -13,15 +14,10 @@ repositories {
 }
 
 group = 'com.craigburke.gradle'
-version = '2.1.4'
+version = '2.2.0'
 
 ext {
     artifactId = 'bower-installer'
-}
-
-configurations {
-    provided
-    testCompile { extendsFrom provided }
 }
 
 dependencies {
@@ -29,12 +25,6 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.10'
     compile 'com.moowork.gradle:gradle-node-plugin:0.10'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
-}
-
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
 }
 
 pluginBundle {
