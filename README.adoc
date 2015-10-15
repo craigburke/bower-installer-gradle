@@ -56,8 +56,8 @@ bower {
         'ui-router'('0.2.x') // <4>
         
         'bootstrap'('3.3.x') {
-            source 'dist/css/*.min.css' >> 'styles/'
-            source 'dist/fonts/**' >> 'fonts/'
+            source 'dist/css/*.min.css' >> './styles/'
+            source 'dist/fonts/**' >> './fonts/'
 
             excludes 'jquery' // <5>
         }
