@@ -4,15 +4,24 @@ class BowerModuleExtension {
 
     String installBase
 
-    List<Dependency> dependencies = []
     Map additional = [:]
-    
+    private DependencyBuilder builder = new DependencyBuilder()
+
     void dependencies(Closure closure) {
-        def builder = new DependencyBuilder()
         Closure clonedClosure = closure.rehydrate(builder, this, this)
         clonedClosure()
-        dependencies = builder.dependencies
     }
-    
-}
 
+    def methodMissing(String name, args) {
+        builder.methodMissing(name, args)
+    }
+
+    List<Dependency> getDependencies() {
+        builder.dependencies
+    }
+
+    void setDependencies(List<Dependency> dependencies) {
+        builder.dependencies = dependencies
+    }
+
+}
