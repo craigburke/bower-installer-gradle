@@ -72,7 +72,7 @@ class BowerJson {
             sourceFolder = sourceExpression - "/${sourceExpression.tokenize('/').last()}"
         }
         else {
-            sourceFolder = sourceExpression
+            sourceFolder = ''
         }
 
         fullRelativePath - sourceFolder - "bower_components/${moduleName}/"
@@ -94,7 +94,7 @@ class BowerJson {
         boolean destinationIsFolder = destination?.endsWith('/')
         boolean absolutePath = destination?.startsWith('/')
 
-        String fileName = relativePath.tokenize('/').last()
+        String fileName = relativePath.contains('/') ? relativePath.tokenize('/').last() : relativePath
         String path = absolutePath ? "..${destination}" : destination
         
         if (!destination) {
