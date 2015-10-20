@@ -1,4 +1,4 @@
-:version: 2.3.1
+:version: 2.4.0
 
 = Bower Installer Gradle Plugin
 
@@ -115,7 +115,7 @@ bower {
 
 === Troubleshooting
 
-If you set the bowerDebug property when you run *bowerInstall* then both the `bower.json` file and the `bower_components` folder will remain to help troubleshoot.
+If you set the bowerDebug property when you run *bowerInstall* then you'll get more detailed outpute and both the `bower.json` file and the `bower_components` folder will remain to help troubleshoot.
 
 [source,bash]
 ----

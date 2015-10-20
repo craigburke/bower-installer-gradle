@@ -34,11 +34,19 @@ class BowerInstallerPlugin implements Plugin<Project> {
                 BOWER_FILE.delete()
             }
         }
-        
+
+        OutputStream nodeStandardOut = new ByteArrayOutputStream()
+        def nodeExecOverrides = {
+            if (!bowerDebug) {
+                it.standardOutput = nodeStandardOut
+            }
+        }
+
         project.task('bowerDependencies', type: NpmTask, group: 'Bower',
                 description: 'Installs dependencies needed for the bower_installer.') {
             args = ['install', 'bower-installer', '--silent']
             outputs.dir project.file(NPM_OUTPUT_PATH + 'bower-installer')
+            execOverrides nodeExecOverrides
         }
         
         project.task('bowerClean', type: NodeTask, dependsOn: 'bowerDependencies', group: 'Bower',
@@ -49,6 +57,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
             }
             script = BOWER_EXEC
             args = ['cache', 'clean']
+            execOverrides nodeExecOverrides
         }
         
         project.task('bowerComponents', type: NodeTask, dependsOn: 'bowerDependencies') {
@@ -56,7 +65,11 @@ class BowerInstallerPlugin implements Plugin<Project> {
                 BOWER_FILE.text = BowerJson.generateBasic(bowerConfig).toString()
             }
             script = BOWER_EXEC
+            outputs.upToDateWhen {
+                project.file(bowerConfig.installBase).exists()
+            }
             args = ['install']
+            execOverrides nodeExecOverrides
         }
 
         project.task('bowerInstall', type: NodeTask, dependsOn: 'bowerComponents', group: 'Bower',
@@ -82,7 +95,9 @@ class BowerInstallerPlugin implements Plugin<Project> {
             outputs.upToDateWhen {
                 project.file(bowerConfig.installBase).exists()
             }
-            
+
+            execOverrides nodeExecOverrides
+
             doLast {
                 project.file(bowerConfig.installBase).eachFile(FileType.DIRECTORIES) {
                     if (!it.list()) {
