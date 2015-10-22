@@ -22,10 +22,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
 
         final File BOWER_FILE = project.file('bower.json')
 
-        def bowerConfig = project.extensions.create('bower', BowerModuleExtension)
-        
-        boolean grailsPluginApplied = project.extensions.findByName('grails')
-        bowerConfig.installBase = grailsPluginApplied ? 'grails-app/assets/bower' : 'src/assets/bower'
+        BowerModuleExtension bowerConfig = project.extensions.create('bower', BowerModuleExtension)
         boolean bowerDebug = project.hasProperty('bowerDebug') ? project.property('bowerDebug') : false
 
         def deleteTempFiles = {
@@ -42,7 +39,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
             }
         }
 
-        project.task('bowerDependencies', type: NpmTask, group: 'Bower',
+        project.task('bowerDependencies', type: NpmTask, group: null,
                 description: 'Installs dependencies needed for the bower_installer.') {
             args = ['install', 'bower-installer', '--silent']
             outputs.dir project.file(NPM_OUTPUT_PATH + 'bower-installer')
@@ -60,7 +57,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
             execOverrides nodeExecOverrides
         }
         
-        project.task('bowerComponents', type: NodeTask, dependsOn: 'bowerDependencies') {
+        project.task('bowerComponents', type: NodeTask, dependsOn: 'bowerDependencies', group: null) {
             doFirst {
                 BOWER_FILE.text = BowerJson.generateBasic(bowerConfig).toString()
             }
@@ -113,6 +110,11 @@ class BowerInstallerPlugin implements Plugin<Project> {
                 description: 'Clears bower cache and refreshes dependencies')
 
         project.afterEvaluate {
+            if (bowerConfig.installBase == null) {
+                boolean grailsPluginApplied = project.extensions.findByName('grails')
+                bowerConfig.installBase = grailsPluginApplied ? 'grails-app/assets/bower' : 'src/assets/bower'
+            }
+
             ['run', 'bootRun', 'assetCompile'].each { String taskName ->
                 def buildTask = project.tasks.findByName(taskName)
                 if (buildTask) {

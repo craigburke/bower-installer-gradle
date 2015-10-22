@@ -3,8 +3,8 @@ package com.craigburke.gradle
 class BowerModuleExtension {
 
     String installBase
-
     Map additional = [:]
+
     private DependencyBuilder builder = new DependencyBuilder()
 
     void dependencies(Closure closure) {

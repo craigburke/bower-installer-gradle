@@ -1,4 +1,4 @@
-:version: 2.4.0
+:version: 2.4.1
 
 = Bower Installer Gradle Plugin
 
@@ -70,7 +70,7 @@ bower {
 <5> Exclude the transitive dependency jquery
 <6> Use a git repository as a dependency source
 
-NOTE: if installBase is not set, it defaults to `src/assets/bower`.
+NOTE: if installBase is not set, it defaults to `src/assets/bower` or `grails-app/assets/bower` in a Grails 3 application.
 
 === Adding Dependencies
 
