@@ -20,7 +20,7 @@ class BowerPluginSpec extends Specification {
         project.tasks[taskName]
         
         where:
-        taskName << ['bowerDependencies', 'bowerComponents', 'bowerInstall', 'bowerClean', 'bowerRefresh']
+        taskName << ['bowerInit', 'bowerDependencies', 'bowerComponents', 'bowerInstall', 'bowerClean', 'bowerRefresh']
     }
     
     @Unroll
@@ -36,6 +36,7 @@ class BowerPluginSpec extends Specification {
         
         where:
         taskName            || dependencies
+        'bowerDependencies' || 'bowerInit'
         'bowerComponents'   || 'bowerDependencies'
         'bowerInstall'      || 'bowerComponents'
         'bowerRefresh'      || ['bowerClean', 'bowerInstall']

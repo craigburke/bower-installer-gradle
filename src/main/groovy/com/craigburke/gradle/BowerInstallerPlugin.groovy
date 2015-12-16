@@ -15,9 +15,9 @@ class BowerInstallerPlugin implements Plugin<Project> {
         project.plugins.apply NodePlugin
         NodeExtension nodeConfig = project.extensions.findByName('node')
         nodeConfig.download = true
-        
-        final String NPM_OUTPUT_PATH = project.file(nodeConfig.nodeModulesDir).absolutePath.replace(File.separator, '/') + '/node_modules/'
-        final File BOWER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/node_modules/bower/bin/bower')
+
+        final String NPM_OUTPUT_PATH = 'node_modules'
+        final File BOWER_EXEC = project.file("${NPM_OUTPUT_PATH}/bower-installer/node_modules/bower/bin/bower")
         final File BOWER_INSTALLER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/bower-installer')
 
         final File BOWER_FILE = project.file('bower.json')
@@ -39,10 +39,18 @@ class BowerInstallerPlugin implements Plugin<Project> {
             }
         }
 
-        project.task('bowerDependencies', type: NpmTask, group: null,
+        project.task('bowerInit', group: null,
+            description: 'Sets up folder structure needed for the bower_installer plugin' ) {
+            project.file(NPM_OUTPUT_PATH).mkdirs()
+        }
+
+        project.task('bowerDependencies', type: NpmTask, dependsOn: 'bowerInit', group: null,
                 description: 'Installs dependencies needed for the bower_installer.') {
-            args = ['install', 'bower-installer', '--silent']
-            outputs.dir project.file(NPM_OUTPUT_PATH + 'bower-installer')
+            args = ['install', 'bower-installer']
+            if (!bowerDebug) {
+                args += ['--silent']
+            }
+            outputs.dir project.file(NPM_OUTPUT_PATH)
             execOverrides nodeExecOverrides
         }
         
