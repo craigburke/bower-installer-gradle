@@ -37,10 +37,11 @@ class BowerPluginSpec extends Specification {
         where:
         taskName            || dependencies
         'bowerDependencies' || 'bowerInit'
-        'bowerComponents'   || 'bowerDependencies'
+        'bowerConfig'       || 'bowerDependencies'
+        'bowerComponents'   || 'bowerConfig'
         'bowerInstall'      || 'bowerComponents'
         'bowerRefresh'      || ['bowerClean', 'bowerInstall']
-        'bowerClean'        || 'bowerDependencies'
+        'bowerClean'        || 'bowerConfig'
     }
     
     def "bower module extension is added"() {
