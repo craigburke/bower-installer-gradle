@@ -47,12 +47,15 @@ class BowerInstallerPlugin implements Plugin<Project> {
             }
             outputs.dir project.file(NPM_OUTPUT_PATH)
             execOverrides nodeExecOverrides
+        }
+
+        project.task('bowerConfig', dependsOn: 'bowerDependencies', group: null) {
             doLast {
                 setBowerExec(project)
             }
         }
 
-        project.task('bowerClean', type: NodeTask, dependsOn: 'bowerDependencies', group: 'Bower',
+        project.task('bowerClean', type: NodeTask, dependsOn: 'bowerConfig', group: 'Bower',
                 description: 'Clears bower cache and removes all installed bower dependencies') {
             doFirst {
                 deleteTempFiles()
@@ -63,7 +66,7 @@ class BowerInstallerPlugin implements Plugin<Project> {
             execOverrides nodeExecOverrides
         }
 
-        project.task('bowerComponents', type: NodeTask, dependsOn: 'bowerDependencies', group: null) {
+        project.task('bowerComponents', type: NodeTask, dependsOn: 'bowerConfig', group: null) {
             doFirst {
                 BOWER_FILE.text = BowerJson.generateBasic(bowerConfig).toString()
             }

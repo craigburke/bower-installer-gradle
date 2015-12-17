@@ -14,7 +14,7 @@ repositories {
 }
 
 group = 'com.craigburke.gradle'
-version = '2.5.0'
+version = '2.5.1'
 
 ext {
     artifactId = 'bower-installer'
