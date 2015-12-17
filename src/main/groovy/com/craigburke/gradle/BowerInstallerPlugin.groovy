@@ -11,36 +11,31 @@ import org.gradle.api.file.FileTree
 
 class BowerInstallerPlugin implements Plugin<Project> {
 
+    static final String NPM_OUTPUT_PATH = 'node_modules'
+    static final String DEFAULT_NODE_VERSION = '4.2.3'
+
     void apply(Project project) {
-        project.plugins.apply NodePlugin
-        NodeExtension nodeConfig = project.extensions.findByName('node')
-        nodeConfig.download = true
+        setupNode(project)
 
-        final String NPM_OUTPUT_PATH = 'node_modules'
-        final File BOWER_EXEC = project.file("${NPM_OUTPUT_PATH}/bower-installer/node_modules/bower/bin/bower")
-        final File BOWER_INSTALLER_EXEC = project.file(NPM_OUTPUT_PATH + '/bower-installer/bower-installer')
-
+        final File BOWER_INSTALLER_EXEC = project.file("${NPM_OUTPUT_PATH}/bower-installer/bower-installer")
         final File BOWER_FILE = project.file('bower.json')
 
         BowerModuleExtension bowerConfig = project.extensions.create('bower', BowerModuleExtension)
         boolean bowerDebug = project.hasProperty('bowerDebug') ? project.property('bowerDebug') : false
 
         def deleteTempFiles = {
-            if (!bowerDebug) {
-                project.delete 'bower_components'
-                BOWER_FILE.delete()
-            }
+            project.delete 'bower_components'
+            BOWER_FILE.delete()
         }
 
-        OutputStream nodeStandardOut = new ByteArrayOutputStream()
         def nodeExecOverrides = {
             if (!bowerDebug) {
-                it.standardOutput = nodeStandardOut
+                it.standardOutput = new ByteArrayOutputStream()
             }
         }
 
         project.task('bowerInit', group: null,
-            description: 'Sets up folder structure needed for the bower_installer plugin' ) {
+                description: 'Sets up folder structure needed for the bower_installer plugin') {
             project.file(NPM_OUTPUT_PATH).mkdirs()
         }
 
@@ -52,64 +47,55 @@ class BowerInstallerPlugin implements Plugin<Project> {
             }
             outputs.dir project.file(NPM_OUTPUT_PATH)
             execOverrides nodeExecOverrides
+            doLast {
+                setBowerExec(project)
+            }
         }
-        
+
         project.task('bowerClean', type: NodeTask, dependsOn: 'bowerDependencies', group: 'Bower',
-                 description: 'Clears bower cache and removes all installed bower dependencies') {
+                description: 'Clears bower cache and removes all installed bower dependencies') {
             doFirst {
                 deleteTempFiles()
                 project.delete bowerConfig.installBase
             }
-            script = BOWER_EXEC
+
             args = ['cache', 'clean']
             execOverrides nodeExecOverrides
         }
-        
+
         project.task('bowerComponents', type: NodeTask, dependsOn: 'bowerDependencies', group: null) {
             doFirst {
                 BOWER_FILE.text = BowerJson.generateBasic(bowerConfig).toString()
             }
-            script = BOWER_EXEC
+
+            args = ['install']
+            execOverrides nodeExecOverrides
             outputs.upToDateWhen {
                 project.file(bowerConfig.installBase).exists()
             }
-            args = ['install']
-            execOverrides nodeExecOverrides
         }
 
         project.task('bowerInstall', type: NodeTask, dependsOn: 'bowerComponents', group: 'Bower',
                 description: 'Installs bower dependencies') {
+
             doFirst {
                 FileTree bowerRoot = project.fileTree('bower_components')
                 def bowerJson = BowerJson.generateFinal(bowerConfig, project.projectDir, bowerRoot)
-                
-                // Make sure containing folder exists
-                bowerJson.content.install.sources.each { String moduleName, config ->
-                    config.mapping.each {
-                        String destination = it.find().value
-                        String path = destination.startsWith('../') ? destination.substring(3) : "${moduleName}/${destination}"
-                        project.file("${bowerConfig.installBase}/${path}").parentFile.mkdirs()
-                    }
-                }
-                
+                createSourceFolders(project, bowerConfig.installBase, bowerJson.content.install.sources)
                 BOWER_FILE.text = bowerJson.toString()
             }
-            
-            script = BOWER_INSTALLER_EXEC
 
+            script = BOWER_INSTALLER_EXEC
+            execOverrides nodeExecOverrides
             outputs.upToDateWhen {
                 project.file(bowerConfig.installBase).exists()
             }
 
-            execOverrides nodeExecOverrides
-
             doLast {
-                project.file(bowerConfig.installBase).eachFile(FileType.DIRECTORIES) {
-                    if (!it.list()) {
-                        it.deleteDir()
-                    }
+                deleteEmptyDirectories(project.file(bowerConfig.installBase))
+                if (!bowerDebug) {
+                    deleteTempFiles()
                 }
-                deleteTempFiles()
             }
         }
 
@@ -118,18 +104,69 @@ class BowerInstallerPlugin implements Plugin<Project> {
                 description: 'Clears bower cache and refreshes dependencies')
 
         project.afterEvaluate {
-            if (bowerConfig.installBase == null) {
-                boolean grailsPluginApplied = project.extensions.findByName('grails')
-                bowerConfig.installBase = grailsPluginApplied ? 'grails-app/assets/bower' : 'src/assets/bower'
-            }
+            setDefaultInstallBase(project, bowerConfig)
+            setTaskDependencies(project)
+        }
+    }
 
-            ['run', 'bootRun', 'assetCompile'].each { String taskName ->
-                def buildTask = project.tasks.findByName(taskName)
-                if (buildTask) {
-                    buildTask.dependsOn 'bowerInstall'
-                }
+    private static void setupNode(Project project) {
+        project.plugins.apply NodePlugin
+        NodeExtension nodeConfig = project.extensions.findByName('node') as NodeExtension
+        nodeConfig.download = true
+        nodeConfig.version = DEFAULT_NODE_VERSION
+    }
+
+    private static void deleteEmptyDirectories(File directory) {
+        directory.eachFile(FileType.DIRECTORIES) {
+            if (!it.list()) {
+                it.deleteDir()
             }
         }
     }
-    
+
+    private static void createSourceFolders(Project project, String installBase, sources) {
+        sources.each { String moduleName, config ->
+            config.mapping.each {
+                String destination = it.find().value
+                String path = destination.startsWith('../') ? destination.substring(3) : "${moduleName}/${destination}"
+                project.file("${installBase}/${path}").parentFile.mkdirs()
+            }
+        }
+    }
+
+    private static void setDefaultInstallBase(Project project, BowerModuleExtension config) {
+        if (config.installBase == null) {
+            boolean grailsPluginApplied = project.extensions.findByName('grails')
+            config.installBase = grailsPluginApplied ? 'grails-app/assets/bower' : 'src/assets/bower'
+        }
+    }
+
+    private static void setTaskDependencies(Project project) {
+        ['run', 'bootRun', 'assetCompile', 'karmaRun', 'karmaWatch'].each { String taskName ->
+            def task = project.tasks.findByName(taskName)
+            if (task) {
+                task.dependsOn 'bowerInstall'
+            }
+        }
+    }
+
+    private static void setBowerExec(Project project) {
+        String bowerExecPath
+
+        ['bower-installer/node_modules/bower/bin/bower', 'bower/bin/bower'].each { String path ->
+            String fullPath = "${NPM_OUTPUT_PATH}/${path}"
+            if (project.file(fullPath).exists()) {
+                bowerExecPath = fullPath
+            }
+        }
+
+        ['bowerComponents', 'bowerClean'].each { String taskName ->
+            def task = project.tasks.findByName(taskName)
+            task.configure {
+                script = project.file(bowerExecPath)
+            }
+        }
+    }
+
+
 }
