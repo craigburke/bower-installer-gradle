@@ -2,6 +2,8 @@
 
 = Bower Installer Gradle Plugin
 
+NOTE: This plugin has been officially replaced with the https://github.com/craigburke/client-dependencies-gradle[client dependencies gradle plugin].
+
 The Gradle plugin uses https://github.com/blittle/bower-installer[bower-installer] to manage client-side dependencies alongside the other
 dependencies in *build.gradle.*
 
